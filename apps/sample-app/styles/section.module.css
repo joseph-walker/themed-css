@@ -1,0 +1,11 @@
+/*!
+@contract section
+{
+	background: color
+}
+*/
+
+nav {
+	text-align: center;
+	background: var(--section-background);
+}

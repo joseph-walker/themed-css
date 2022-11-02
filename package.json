@@ -1,0 +1,25 @@
+{
+  "name": "theme-contracts",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test"
+  },
+  "private": true,
+  "dependencies": {
+    "pnpm": "7.14.1"
+  },
+  "devDependencies": {
+    "@nrwl/cli": "15.0.4",
+    "@nrwl/nx-cloud": "latest",
+    "@nrwl/workspace": "15.0.4",
+    "@types/node": "^18.11.7",
+    "nx": "15.0.4",
+    "prettier": "^2.6.2",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "~4.8.2"
+  }
+}

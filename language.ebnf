@@ -1,0 +1,22 @@
+(* EBNF-Encoded Language Specifications for Themed-CSS Contract structures *)
+
+(* Root Grammar *)
+Grammar ::= ContractToken WS Identifier WSOpt Map
+
+(* Special Tokens *)
+ContractToken ::= "@contract"
+Type          ::= "color"
+  | "dimension"
+  | "flexAlignment"
+  | "variable"
+  | "number"
+
+(* Language Sequences *)
+Unit      ::= Identifier WSOpt ":" WSOpt Type
+Map       ::= "{" WSOpt Statement WSOpt "}"
+Statement ::= Unit | Identifier WS Map
+
+(* Generic Tokens *)
+Identifier ::= [a-zA-Z]+
+WS         ::= [\s]+
+WSOpt      ::= WS*

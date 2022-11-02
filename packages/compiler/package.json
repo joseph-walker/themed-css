@@ -1,0 +1,25 @@
+{
+  "name": "@theme-contracts/compiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "example": "ts-node ./src/theme-contracts.ts check \"./../../apps/sample-app/styles/*.module.css\" \"./../../apps/sample-app/themes/*.css\"",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.4.1",
+    "css-tree": "^2.2.1",
+    "glob": "^8.0.3",
+    "parsimmon": "^1.18.1"
+  },
+  "devDependencies": {
+    "@types/css-tree": "^2.0.0",
+    "@types/glob": "^8.0.0",
+    "@types/parsimmon": "^1.10.6"
+  }
+}
