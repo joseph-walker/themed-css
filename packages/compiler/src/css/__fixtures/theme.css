@@ -2,3 +2,8 @@
 	--anchor-color: red;
 	--anchor-hover-color: pink;
 }
+
+/* Also maybe there's some other random garbage */
+.foo {
+	color: red;
+}

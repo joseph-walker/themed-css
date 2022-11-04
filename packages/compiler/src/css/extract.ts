@@ -2,37 +2,45 @@ import * as csstree from "css-tree";
 
 import { Marked } from "../language/astMarked";
 import { Contract } from "../language/grammar";
+import { locate, type Located } from "../language/located";
 
-export function extractContractsFromCss(css: string): Marked.Group[] {
-	const ast = csstree.parse(css);
+export function extractContractsFromCss(css: string, filename?: string): Located<csstree.CssLocation, Marked.Group>[] {
+	const ast = csstree.parse(css, { positions: true, filename });
 
 	const commentBlocks = csstree.findAll(ast, function (node) {
 		return node.type === "Comment";
 	}) as csstree.Comment[];
 
 	return commentBlocks.map(function (block: csstree.Comment) {
-		return Contract.tryParse(block.value);
+		return locate(
+			block.loc,
+			Contract.tryParse(block.value)
+		);
 	});
 }
 
-export function extractVariablesFromCss(css: string) {
-	const ast = csstree.parse(css);
+export function extractVariablesFromCss(css: string, filename?: string) {
+	const ast = csstree.parse(css, { positions: true, filename });
 
-	const variables = [] as [string, string][];
+	const variables = [] as Located<csstree.CssLocation, [string, string]>[];
 
 	csstree.walk(ast, {
 		visit: 'Declaration',
 		enter: function (node) {
+			const location = node.loc;
 			const identifier = node.property;
 			const value = node.value;
 
-			// TODO: As far as I can tell css-tree always makes CSSVariables (css-custom-properties)
-			// return with a Node of type Raw. But that may not be entirely accurate. Need to investigate.
+			// TODO: css-tree parses custom-properties as type "Raw" without the
+			// `parseCustomProperty` flag -- this is convenient because it lets us quickly locate
+			// declarations that are variables. But it's probably kind of hack. Revisit in the future.
 			if (value.type !== "Raw") {
 				return;
 			}
 
-			variables.push([identifier, value.value]);
+			variables.push(
+				locate(location, [identifier, value.value])
+			);
 		}
 	});
 
