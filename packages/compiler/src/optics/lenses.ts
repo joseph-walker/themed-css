@@ -6,7 +6,7 @@ import type { Kind, Property } from '../language/kinds';
 import { Traversable } from 'fp-ts/Array';
 import { fromTraversable, Iso, Lens, Prism } from 'monocle-ts';
 
-import { kebabCaseToPascalCase, pascalCaseToKebabCase } from '../language/kinds';
+import { propertyToKind, kindToProperty } from '../language/kinds';
 
 export const start = Lens.fromProp<Mark<any>>()('start');
 
@@ -19,8 +19,8 @@ export const identifier = {
 export const kind = {
 	value: Lens.fromProp<Marked.Kind>()('value'),
 	isoProperty: new Iso<Kind, Property>(
-		pascalCaseToKebabCase,
-		kebabCaseToPascalCase
+		kindToProperty,
+		propertyToKind
 	)
 } as const;
 
@@ -36,9 +36,6 @@ const groupStatements = Lens.fromPath<Marked.Group>()(['value', 'statements']);
 export const group = {
 	identifier: Lens.fromPath<Marked.Group>()(['value', 'identifier']),
 	statements: groupStatements,
-	statementsT: groupStatements.composeTraversal(
-		fromTraversable(Traversable)<Marked.Statement>()
-	),
 } as const;
 
 export const statement = {
@@ -52,4 +49,5 @@ export const statement = {
 	): statement is Marked.Group {
 		return statement.value.type === 'Group';
 	}),
+	T: fromTraversable(Traversable)<Marked.Statement>(),
 } as const;

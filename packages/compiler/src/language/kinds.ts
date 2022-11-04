@@ -11,13 +11,13 @@ type PascalCase<T extends string> = T extends `${infer Head}-${infer Tail}`
 export type Property = OmitBrowserSpecificProperties<keyof typeof allProperties>
 export type Kind = PascalCase<Property>
 
-export function kebabCaseToPascalCase<T extends string>(kebab: T) {
-	return kebab.replaceAll(/(^.|-.)/g, (match) => match.at(-1).toUpperCase()) as PascalCase<T>;
+export function propertyToKind(property: Property) {
+	return property.replaceAll(/(^.|-.)/g, (match) => match.at(-1).toUpperCase()) as Kind;
 }
 
-export function pascalCaseToKebabCase(pascal: string) {
-	return pascal.replaceAll(/([A-Z])/g, (match) => "-" + match.toLowerCase()).slice(1);
+export function kindToProperty(kind: Kind) {
+	return kind.replaceAll(/([A-Z])/g, (match) => "-" + match.toLowerCase()).slice(1) as Property;
 }
 
 export const properties = Object.keys(allProperties).filter((p): p is Property => p[0] != '-');
-export const kinds: Kind[] = properties.map(kebabCaseToPascalCase);
+export const kinds = properties.map(propertyToKind);
