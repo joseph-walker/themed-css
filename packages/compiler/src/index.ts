@@ -1,4 +1,4 @@
-import { ContractGrammar } from "./language/grammar";
+import * as ContractGrammar from "./language/grammar";
 
 const sample = `anchor { fill: Color }`
 
