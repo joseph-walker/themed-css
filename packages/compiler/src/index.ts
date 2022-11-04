@@ -1,10 +1,12 @@
-import * as ContractGrammar from "./language/grammar";
-import { projectToUnmarked } from "./optics/project";
+export * from "./language/astMarked";
+export * from "./language/grammar";
+export * from "./language/located";
 
-const sample = `@contract anchor { fill: Color }`
+export * from "./css/extract";
 
-const parsed = ContractGrammar.Contract.tryParse(sample);
+export * from "./validations/contract";
+export * from "./validations/kind";
 
-console.log(
-	JSON.stringify(projectToUnmarked(parsed), null, 4)
-);
+export * as Collect from "./optics/collect";
+export * as Optics from "./optics/lenses";
+export * as Project from "./optics/project";
