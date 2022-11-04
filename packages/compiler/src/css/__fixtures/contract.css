@@ -1,0 +1,18 @@
+/*!
+	Anchor is an element that represents a link; an <a> or a <button> for example.
+
+	@contract anchor {
+		color: Color
+		hover {
+			color: Color
+		}
+	}
+*/
+
+.anchor {
+	color: var(--anchor-color);
+}
+
+.anchor:hover {
+	color: var(--anchor-hover-color);
+}
