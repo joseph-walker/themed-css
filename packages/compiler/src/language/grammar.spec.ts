@@ -1,5 +1,11 @@
 import { ContractGrammar } from "./grammar";
 
+const validKindsFixtures = [
+	["FlexDirection"],
+	["BorderColor"],
+	["Background"]
+];
+
 const validIdentifierFixtures = [
 	["foo"],
 	["fooBar"],
@@ -11,37 +17,45 @@ const invalidIdentifierFixtures = [
 ];
 
 const validUnitFixtures = [
-	["foo:color"],
-	["foo: color"],
-	["foo :color"],
-	["foo : number"],
-	["foo	:	number"],
+	["foo:Color"],
+	["foo: Color"],
+	["foo :Color"],
+	["foo : Padding"],
+	["foo	:	Padding"],
 ];
 
 const validGroupFixtures = [
-	["foo { bar: color }"],
+	["foo { bar: Color }"],
 	[`foo {
-		bar: color
+		bar: Color
 	}`],
 	[`FOO {
-	 	bar { baz: color}}`]
+	 	bar { baz: Color}}`]
 ];
 
 const validContractFixtures = [
 	[`@contract example {
-		foo: number
+		foo: Padding
 		bar {
-			baz: color
+			baz: Margin
 		}
 	}`],
-	["@contract anchor { color: color }"],
+	["@contract anchor { color: Color }"],
 	[`
 	Example of a doc comment in a CSS comment block.
-	@contract anchor { color: color }`],
-	["See jwalker@rent.com for help with contract blocks @contract anchor { color: color }"]
+	@contract anchor { color: Color }`],
+	["See jwalker@rent.com for help with contract blocks @contract anchor { color: Color }"]
 ]
 
 describe("Contract Grammar - Stress Test", function () {
+	describe("Kinds", function () {
+		describe.each(validKindsFixtures)("kind => \"%s\"", function (kind) {
+			it("is parsed without an error", function () {
+				expect(() => ContractGrammar.Kind.tryParse(kind)).not.toThrow();
+			});
+		});
+	});
+
 	describe("Identifiers", function () {
 		describe.each(validIdentifierFixtures)("identifier => \"%s\"", function (identifier) {
 			it("is parsed without an error", function () {
@@ -50,10 +64,9 @@ describe("Contract Grammar - Stress Test", function () {
 		});
 
 		describe.each(invalidIdentifierFixtures)("identifier => \"%s\"", function (identifier) {
-			it.only("does not parse and throws an error", function () {
+			it("does not parse and throws an error", function () {
 				try {
 					const result = ContractGrammar.Identifier.parse(identifier);
-
 				} catch (e) {
 					console.log(e);
 				}

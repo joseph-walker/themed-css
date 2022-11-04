@@ -1,11 +1,13 @@
+import type { O } from 'ts-toolbelt';
 import type { Mark } from 'parsimmon';
 
-import * as Marked from '../language/astMarked';
+import { Marked } from '../language/astMarked';
 
 import { Traversable } from 'fp-ts/Array';
 import { fromTraversable, Lens, Prism } from 'monocle-ts';
 
 export const start = Lens.fromProp<Mark<any>>()('start');
+
 export const end = Lens.fromProp<Mark<any>>()('end');
 
 export const identifier = {
@@ -19,13 +21,17 @@ export const kind = {
 export const unit = {
 	identifier: Lens.fromPath<Marked.Unit>()(['value', 'identifier']),
 	kind: Lens.fromPath<Marked.Unit>()(['value', 'kind']),
+	T: fromTraversable(Traversable)<Marked.Unit>()
 } as const;
 
 const groupStatements = Lens.fromPath<Marked.Group>()(['value', 'statements']);
+
 export const group = {
 	identifier: Lens.fromPath<Marked.Group>()(['value', 'identifier']),
 	statements: groupStatements,
-	statementsT: groupStatements.composeTraversal(fromTraversable(Traversable)<Marked.Statement>())
+	statementsT: groupStatements.composeTraversal(
+		fromTraversable(Traversable)<Marked.Statement>()
+	),
 } as const;
 
 export const statement = {
@@ -41,9 +47,28 @@ export const statement = {
 	}),
 } as const;
 
-const contractStatements = Lens.fromPath<Marked.Contract>()(['value', 'statements']);
+export type WithStatements = Mark<
+	O.Intersect<Marked.Contract['value'], Marked.Group['value'], 'equals'>
+>;
+
+const statements = Lens.fromPath<WithStatements>()(['value', 'statements']);
+
+export const withStatements = {
+	statements,
+	statementsT: statements.composeTraversal(
+		fromTraversable(Traversable)<Marked.Statement>()
+	),
+};
+
+const contractStatements = Lens.fromPath<Marked.Contract>()([
+	'value',
+	'statements',
+]);
+
 export const contract = {
 	identifier: Lens.fromPath<Marked.Contract>()(['value', 'identifier']),
 	statements: contractStatements,
-	statementsT: contractStatements.composeTraversal(fromTraversable(Traversable)<Marked.Statement>()),
+	statementsT: contractStatements.composeTraversal(
+		fromTraversable(Traversable)<Marked.Statement>()
+	),
 } as const;

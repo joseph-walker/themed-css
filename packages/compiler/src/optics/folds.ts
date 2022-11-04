@@ -3,11 +3,11 @@ import { foldMap } from 'fp-ts/lib/Tree';
 import { getMonoid } from "fp-ts/Array"
 
 import { type Shrub, projectToTree } from './project/tree';
-import { Kind } from '../language/ast';
+import { Origin } from '../language/ast';
 
 export type Variable = {
 	name: string;
-	kind: Kind;
+	kind: Origin.Kind;
 }
 
 /**

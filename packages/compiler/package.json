@@ -15,8 +15,10 @@
   "dependencies": {
     "commander": "^9.4.1",
     "css-tree": "^2.2.1",
+    "csstree-validator": "^3.0.0",
     "fp-ts": "^2.13.1",
     "glob": "^8.0.3",
+    "mdn-data": "^2.0.30",
     "monocle-ts": "^2.3.13",
     "parsimmon": "^1.18.1"
   },

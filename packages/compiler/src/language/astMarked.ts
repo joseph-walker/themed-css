@@ -6,28 +6,30 @@
 import type { O } from 'ts-toolbelt';
 import type { Mark } from 'parsimmon';
 
-import type * as Origin from './ast';
+import type { Origin } from './ast';
 
-export type Identifier = Mark<Origin.Identifier>;
+export namespace Marked {
+	export type Identifier = Mark<Origin.Identifier>;
 
-export type Kind = Mark<Origin.Kind>;
+	export type Kind = Mark<Origin.Kind>;
 
-export type Statement = Unit | Group;
+	export type Statement = Unit | Group;
 
-export type Unit = Mark<
-	O.Overwrite<Origin.Unit, { kind: Kind; identifier: Identifier }>
->;
+	export type Unit = Mark<
+		O.Overwrite<Origin.Unit, { kind: Kind; identifier: Identifier }>
+	>;
 
-export type Group = Mark<
-	O.Overwrite<
-		Origin.Group,
-		{ identifier: Identifier; statements: Statement[] }
-	>
->;
+	export type Group = Mark<
+		O.Overwrite<
+			Origin.Group,
+			{ identifier: Identifier; statements: Statement[] }
+		>
+	>;
 
-export type Contract = Mark<
-	O.Overwrite<
-		Origin.Contract,
-		{ identifier: Identifier; statements: Statement[] }
-	>
->;
+	export type Contract = Mark<
+		O.Overwrite<
+			Origin.Contract,
+			{ identifier: Identifier; statements: Statement[] }
+		>
+	>;
+}

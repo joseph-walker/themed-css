@@ -1,18 +1,7 @@
-import { ContractGrammar } from './language/grammar';
-import { foldVariables } from './optics/folds';
+import { ContractGrammar } from "./language/grammar";
 
-const sample = ContractGrammar.Contract.tryParse(`
-@contract example {
-	foo: color
-	bar: dimension
-	bar {
-		baz: color
-		hover {
-			link: flex-alignment
-		}
-	}
-}`);
+const sample = `anchor { fill: Color }`
 
-console.log(
-	foldVariables(sample)
-);
+const parsed = ContractGrammar.Group.tryParse(sample);
+
+console.log(parsed);

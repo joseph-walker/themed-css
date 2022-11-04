@@ -4,6 +4,8 @@
 	"compilerOptions": {
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"module": "CommonJS"
+		"module": "CommonJS",
+		"resolveJsonModule": true,
+		"esModuleInterop": true
 	}
 }

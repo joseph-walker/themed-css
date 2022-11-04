@@ -1,7 +1,7 @@
 import type { Mark } from 'parsimmon';
 
-import type * as Origin from '../../language/ast';
-import type * as Marked from '../../language/astMarked';
+import type { Origin } from '../../language/ast';
+import type { Marked } from '../../language/astMarked';
 
 export type UnMark<T> = T extends Mark<infer U> ? U : T;
 

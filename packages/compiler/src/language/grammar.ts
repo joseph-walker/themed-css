@@ -7,16 +7,15 @@ import {
 	optWhitespace,
 	whitespace,
 } from 'parsimmon';
+import { Ord } from 'fp-ts/number';
+import { reverse, contramap } from 'fp-ts/Ord';
+import { sortBy } from 'fp-ts/Array';
 
-import * as Marked from './astMarked';
-import { Kind } from './ast';
+import { Marked } from './astMarked';
+import { kinds } from './kinds';
 
 type Language = {
-	Dimension: Kind.Dimension;
-	Color: Kind.Color;
-	FlexAlignment: Kind.FlexAlignment;
-	Number: Kind.Number;
-	Type: Marked.Kind;
+	Kind: Marked.Kind;
 	Identifier: Marked.Identifier;
 	Unit: Marked.Unit;
 	Group: Marked.Group;
@@ -26,34 +25,25 @@ type Language = {
 };
 
 export const ContractGrammar = createLanguage<Language>({
-	Dimension: () => string('dimension').map((_) => Kind.Dimension as const),
+	Kind: function (lang) {
+		// TODO - This is extraordinarily slow; optimize the parsing of Kinds.
+		const kindsLongestToShortest = sortBy([
+			reverse(contramap((s: string) => s.length)(Ord)),
+		])(kinds);
 
-	Color: () => string('color').map((_) => Kind.Color as const),
-
-	FlexAlignment: () =>
-		string('flex-alignment').map((_) => Kind.FlexAlignment as const),
-
-	Number: () => string('number').map((_) => Kind.Number as const),
-
-	Type: function (lang) {
-		return alt(
-			lang.Dimension,
-			lang.Number,
-			lang.Color,
-			lang.FlexAlignment
-		).mark();
+		return alt(...kindsLongestToShortest.map((s) => string(s).mark()));
 	},
 
 	Identifier: function () {
 		return regex(/[a-z]+/i)
 			.mark()
-			.desc("Invalid Identifier: Only alpha characters are allowed.");
+			.desc('Invalid Identifier: Only alpha characters are allowed.');
 	},
 
 	Unit: function (lang) {
 		const colonWithWhitespace = string(':').trim(optWhitespace);
 
-		return seq(lang.Identifier.skip(colonWithWhitespace), lang.Type)
+		return seq(lang.Identifier.skip(colonWithWhitespace), lang.Kind)
 			.map(function ([identifier, kind]) {
 				return {
 					type: 'Unit' as const,
@@ -74,13 +64,22 @@ export const ContractGrammar = createLanguage<Language>({
 	},
 
 	Group: function (lang) {
-		return seq(lang.Identifier.skip(optWhitespace), lang.Map)
-			.map(function ([identifier, statements]) {
-				return {
-					type: 'Group' as const,
-					identifier,
-					statements,
-				};
+		return lang.Identifier.skip(optWhitespace)
+			.chain(function (identifier) {
+				const opener = string('{').trim(optWhitespace);
+				const closer = string('}').trim(optWhitespace);
+				const statements = lang.Statement.sepBy1(whitespace);
+				const body = opener
+					.then(statements.trim(optWhitespace))
+					.skip(closer);
+
+				return body.map(function (statements) {
+					return {
+						type: 'Group' as const,
+						identifier,
+						statements,
+					};
+				});
 			})
 			.mark();
 	},
@@ -94,7 +93,7 @@ export const ContractGrammar = createLanguage<Language>({
 		const contractOpener = string('@contract')
 			.skip(whitespace)
 			.then(lang.Identifier)
-			.desc("Missing contract Identifier");
+			.desc('Missing contract Identifier');
 
 		return anyRandomGarbage
 			.then(seq(contractOpener, lang.Map))
