@@ -1,7 +1,10 @@
 import * as ContractGrammar from "./language/grammar";
+import { projectToUnmarked } from "./optics/project";
 
-const sample = `anchor { fill: Color }`
+const sample = `@contract anchor { fill: Color }`
 
-const parsed = ContractGrammar.Group.tryParse(sample);
+const parsed = ContractGrammar.Contract.tryParse(sample);
 
-console.log(parsed);
+console.log(
+	JSON.stringify(projectToUnmarked(parsed), null, 4)
+);

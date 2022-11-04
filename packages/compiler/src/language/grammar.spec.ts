@@ -1,4 +1,4 @@
-import { ContractGrammar } from "./grammar";
+import * as ContractGrammar from "./grammar";
 
 const validKindsFixtures = [
 	["FlexDirection"],
@@ -77,7 +77,7 @@ describe("Contract Grammar - Stress Test", function () {
 	describe("Units", function () {
 		describe.each(validUnitFixtures)("unit => \"%s\"", function (unit) {
 			it("is parsed without an error", function () {
-				expect(() => ContractGrammar.Unit.tryParse(unit)).not.toThrow();
+				expect(() => ContractGrammar.Unit().tryParse(unit)).not.toThrow();
 			});
 		});
 	});
@@ -85,7 +85,7 @@ describe("Contract Grammar - Stress Test", function () {
 	describe("Groups", function () {
 		describe.each(validGroupFixtures)("group => \"%s\"", function (group) {
 			it("is parsed without an error", function () {
-				expect(() => ContractGrammar.Group.tryParse(group)).not.toThrow();
+				expect(() => ContractGrammar.Group().tryParse(group)).not.toThrow();
 			});
 		});
 	});

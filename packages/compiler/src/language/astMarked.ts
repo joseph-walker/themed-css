@@ -25,11 +25,4 @@ export namespace Marked {
 			{ identifier: Identifier; statements: Statement[] }
 		>
 	>;
-
-	export type Contract = Mark<
-		O.Overwrite<
-			Origin.Contract,
-			{ identifier: Identifier; statements: Statement[] }
-		>
-	>;
 }

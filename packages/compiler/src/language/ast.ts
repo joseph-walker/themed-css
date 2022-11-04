@@ -39,6 +39,7 @@ export namespace Origin {
 	export type Unit = Node<'Unit'> & {
 		identifier: Identifier;
 		kind: Kind;
+		variable: string;
 	};
 
 	/**
@@ -64,13 +65,4 @@ export namespace Origin {
 	 * { identifier: hover, statements: [ { identifier: color, kind: Color } ] }
 	 */
 	export type Statement = Unit | Group;
-
-	/**
-	 * A Contract is a special Group with a unique tag - it represents the root Group defining the contract.
-	 * The Contract type represents the contract in its entirety and is the entry point for consuming its statements.
-	 */
-	export type Contract = Node<'Contract'> & {
-		identifier: Identifier;
-		statements: Statement[];
-	};
 }

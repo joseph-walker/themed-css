@@ -1,10 +1,12 @@
-import type { O } from 'ts-toolbelt';
 import type { Mark } from 'parsimmon';
 
-import { Marked } from '../language/astMarked';
+import type { Marked } from '../language/astMarked';
+import type { Kind, Property } from '../language/kinds';
 
 import { Traversable } from 'fp-ts/Array';
-import { fromTraversable, Lens, Prism } from 'monocle-ts';
+import { fromTraversable, Iso, Lens, Prism } from 'monocle-ts';
+
+import { kebabCaseToPascalCase, pascalCaseToKebabCase } from '../language/kinds';
 
 export const start = Lens.fromProp<Mark<any>>()('start');
 
@@ -16,12 +18,17 @@ export const identifier = {
 
 export const kind = {
 	value: Lens.fromProp<Marked.Kind>()('value'),
+	isoProperty: new Iso<Kind, Property>(
+		pascalCaseToKebabCase,
+		kebabCaseToPascalCase
+	)
 } as const;
 
 export const unit = {
 	identifier: Lens.fromPath<Marked.Unit>()(['value', 'identifier']),
 	kind: Lens.fromPath<Marked.Unit>()(['value', 'kind']),
-	T: fromTraversable(Traversable)<Marked.Unit>()
+	variable: Lens.fromPath<Marked.Unit>()(['value', 'variable']),
+	T: fromTraversable(Traversable)<Marked.Unit>(),
 } as const;
 
 const groupStatements = Lens.fromPath<Marked.Group>()(['value', 'statements']);
@@ -45,30 +52,4 @@ export const statement = {
 	): statement is Marked.Group {
 		return statement.value.type === 'Group';
 	}),
-} as const;
-
-export type WithStatements = Mark<
-	O.Intersect<Marked.Contract['value'], Marked.Group['value'], 'equals'>
->;
-
-const statements = Lens.fromPath<WithStatements>()(['value', 'statements']);
-
-export const withStatements = {
-	statements,
-	statementsT: statements.composeTraversal(
-		fromTraversable(Traversable)<Marked.Statement>()
-	),
-};
-
-const contractStatements = Lens.fromPath<Marked.Contract>()([
-	'value',
-	'statements',
-]);
-
-export const contract = {
-	identifier: Lens.fromPath<Marked.Contract>()(['value', 'identifier']),
-	statements: contractStatements,
-	statementsT: contractStatements.composeTraversal(
-		fromTraversable(Traversable)<Marked.Statement>()
-	),
 } as const;
