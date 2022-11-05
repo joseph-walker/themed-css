@@ -1,12 +1,12 @@
 /*!
 @contract anchor
 {
-	color: color
-	weight: number
-	padding: dimension
-	alignment: flex-alignment
+	color: Color
+	weight: FontWeight
+	padding: Padding
+	alignment: AlignItems
 	hover {
-		color: color
+		color: Color
 	}
 }
 */

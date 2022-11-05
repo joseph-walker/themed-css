@@ -1,0 +1,24 @@
+{
+  "name": "@theme-contracts/cli",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "theme-contracts": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@theme-contracts/compiler": "workspace:*",
+    "commander": "^9.4.1",
+    "glob": "^8.0.3"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/node": "^18.11.7"
+  }
+}

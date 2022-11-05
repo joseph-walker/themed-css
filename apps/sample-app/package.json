@@ -1,0 +1,14 @@
+{
+  "name": "sample-app",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "scripts": {
+    "validate-contracts": "theme-contracts check 'styles/*.module.css' 'themes/*.css'"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@theme-contracts/cli": "workspace:*"
+  }
+}

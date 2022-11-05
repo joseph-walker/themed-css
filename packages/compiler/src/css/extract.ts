@@ -39,7 +39,7 @@ export function extractVariablesFromCss(css: string, filename?: string) {
 			}
 
 			variables.push(
-				locate(location, [identifier, value.value])
+				locate(location, [identifier, value.value.trim()])
 			);
 		}
 	});
