@@ -5,7 +5,7 @@
   "keywords": [],
   "author": "",
   "scripts": {
-    "validate-contracts": "theme-contracts check 'styles/*.module.css' 'themes/*.css'"
+    "validate-contracts": "theme-contracts check 'styles/*.module.css' 'themes/light.css'"
   },
   "license": "ISC",
   "devDependencies": {

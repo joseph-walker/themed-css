@@ -32,6 +32,8 @@ export const locate = <E, A>(location: E, value: A): Located<E, A> => ({
 	value,
 });
 
+export const unlocate = <E, A>(fa: Located<E, A>): [E, A] => ([fa.location, fa.value]);
+
 export const map =
 	<A, B>(f: (a: A) => B) =>
 	<E>(fa: Located<E, A>) => ({

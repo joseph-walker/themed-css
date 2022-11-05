@@ -2,7 +2,7 @@ import { promisify } from 'util';
 import { Command } from 'commander';
 import { glob as globCB } from 'glob';
 
-import { extractContractsFromCss, extractVariablesFromCss } from "@theme-contracts/compiler";
+import { extractContractsFromCss, extractVariablesFromCss, validateContractWithVariables } from "@theme-contracts/compiler";
 
 import { readFile } from 'fs/promises';
 
@@ -37,9 +37,12 @@ program
 		const contracts = (await Promise.all(srcFiles.flatMap(runExtractContract))).flat();
 
 		const themeFiles = await glob(themeGlob);
-		const themes = (await Promise.all(themeFiles.flatMap(runExtractThemes))).flat();
+		const themeVariables = (await Promise.all(themeFiles.flatMap(runExtractThemes))).flat();
 
-		console.log(JSON.stringify(themes, null, 4));
+		// console.log(JSON.stringify(contracts, null, 4));
+		// console.log(JSON.stringify(themeVariables, null, 4));
+
+		validateContractWithVariables(contracts[0], themeVariables);
 	});
 
 program.parse();
