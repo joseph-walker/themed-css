@@ -31,7 +31,7 @@ export const validateProperty = (property: Property, value: Option<string>): Val
 
 	return pipe(
 		value,
-		fromOption(() => error("Variable not defined in contract" )),
+		fromOption(() => error("Theme is missing contract variable" )),
 		chain(validateDeclarationFixed(property)),
 		foldW(identity, identity),
 		result => ({ result, name: validationName })
