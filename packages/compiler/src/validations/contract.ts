@@ -1,7 +1,7 @@
 import type { CssLocation } from 'css-tree';
 
 import type { Marked } from '../language/astMarked';
-import type { ErrorLocation, Validation, VariableMap } from './validation';
+import type { ValidationLocation, Validation, VariableMap } from '../data/validation';
 
 import { pipe } from 'fp-ts/function';
 import { map } from 'fp-ts/Array';
@@ -9,10 +9,10 @@ import { map as mapOption } from 'fp-ts/Option';
 import { fst, snd } from 'fp-ts/Tuple';
 import { Optional } from 'monocle-ts';
 
-import { locate, unlocate } from '../language/located';
+import { locate, unlocate } from '../data/located';
 import { collectUnits } from '../optics/collect';
 import { validateProperty } from './property';
-import { Located } from '../language/located';
+import { Located } from '../data/located';
 import * as L from '../optics/lenses';
 
 const variableOption = Optional.fromNullableProp<VariableMap>();
@@ -34,7 +34,7 @@ const transposeVariableLocation = (
 const validateUnit =
 	(contractLocation: CssLocation) =>
 	(variables: VariableMap) =>
-	(unit: Marked.Unit): Located<ErrorLocation, Validation[]> => {
+	(unit: Marked.Unit): Located<ValidationLocation, Validation[]> => {
 		// Construct all the things we could possibly need to evaluate this contract
 		// statement, e.g. values, properties, themes, locations, contracts, etc.
 
@@ -73,13 +73,18 @@ const validateUnit =
 		/** The actual value for this variable as derived form the input theme (May not exist) */
 		const actualVariableValue = mapOption(snd)(actualVariable);
 
-		const errorLocation: ErrorLocation = {
+		/** Package up all this metadata with a nice bow for consumers of validation to format reporting however they like */
+		const validationMetadata: ValidationLocation = {
+			contractItemName,
+			contractItemKind: L.kind.isoProperty.reverseGet(propertyType),
+			derivedVariableName,
 			variableLocation: actualVariableLocation,
+			variableValue: actualVariableValue,
 			contractLocation: contractItemLocation,
 		};
 
 		// Begin validations
-		return locate(errorLocation, [
+		return locate(validationMetadata, [
 			// Validates that the type of the variable matches the type defined in the contract
 			validateProperty(propertyType, actualVariableValue),
 		]);

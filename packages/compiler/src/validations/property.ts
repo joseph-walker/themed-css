@@ -6,7 +6,7 @@ import { type Either, fromOption, chain, left, right, foldW } from 'fp-ts/Either
 import { type Option } from 'fp-ts/Option';
 
 import { Property } from '../language/kinds';
-import { type Validation, type Error, type Warning, type Ok, error, warning, ok } from './validation';
+import { type Validation, type Error, type Warning, type Ok, error, warning, ok } from '../data/validation';
 
 // This is the type of the error from `validateDeclaration`
 // No idea if it's correct.

@@ -2,7 +2,7 @@ import * as csstree from "css-tree";
 
 import { Marked } from "../language/astMarked";
 import { Contract } from "../language/grammar";
-import { locate, type Located } from "../language/located";
+import { locate, type Located } from "../data/located";
 
 export function extractContractsFromCss(css: string, filename?: string): Located<csstree.CssLocation, Marked.Group>[] {
 	const ast = csstree.parse(css, { positions: true, filename });

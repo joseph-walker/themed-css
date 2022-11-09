@@ -1,7 +1,17 @@
 import type { Option } from 'fp-ts/Option';
 import type { CssLocation } from 'css-tree';
 
-import type { Located } from '../language/located';
+import type { Located } from './located';
+import { Kind } from '../language/kinds';
+
+export type ValidationLocation = {
+	contractItemName: string;
+	contractItemKind: Kind;
+	derivedVariableName: string;
+	variableLocation: Option<CssLocation>;
+	variableValue: Option<string>;
+	contractLocation: CssLocation;
+};
 
 type TaggedValidationResult<T extends string> = {
 	type: T;
@@ -21,11 +31,6 @@ export type Validation = {
 	result: ValidationResult;
 	name: string;
 }
-
-export type ErrorLocation = {
-	variableLocation: Option<CssLocation>;
-	contractLocation: CssLocation;
-};
 
 export type VariableMap = Record<string, Located<CssLocation, string>>;
 

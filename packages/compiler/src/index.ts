@@ -1,6 +1,6 @@
 export * from "./language/astMarked";
 export * from "./language/grammar";
-export * from "./language/located";
+export * from "./data/located";
 
 export * from "./css/extract";
 
