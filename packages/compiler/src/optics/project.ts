@@ -12,7 +12,7 @@ function unmark<T extends Mark<any>>(markedThing: T): UnMark<T> {
 /**
  * Given a raw MarkedContract from the parser, project it into a naked
  * Contract object with syntax and line/column information removed. Utility method
- * for simpler consumption of the AST.
+ * for simpler consumption and debugging of the AST.
  *
  * @param marked
  * @returns
