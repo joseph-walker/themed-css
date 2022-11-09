@@ -1,7 +1,11 @@
 import type { CssLocation } from 'css-tree';
 
 import type { Marked } from '../language/astMarked';
-import type { ValidationLocation, Validation, VariableMap } from '../data/validation';
+import type {
+	ValidationLocation,
+	Validation,
+	VariableMap,
+} from '../data/validation';
 
 import { pipe } from 'fp-ts/function';
 import { map } from 'fp-ts/Array';
@@ -32,7 +36,7 @@ const transposeVariableLocation = (
 };
 
 const validateUnit =
-	(contractLocation: CssLocation) =>
+	(contractName: string, contractLocation: CssLocation) =>
 	(variables: VariableMap) =>
 	(unit: Marked.Unit): Located<ValidationLocation, Validation[]> => {
 		// Construct all the things we could possibly need to evaluate this contract
@@ -50,8 +54,8 @@ const validateUnit =
 		 */
 		const contractItemLocation: CssLocation = {
 			source: contractLocation.source,
-			start: L.start.get(unit),
-			end: L.end.get(unit),
+			start: L.start().get(unit),
+			end: L.end().get(unit),
 		};
 
 		/** The name of the variable that is derived from this contract, e.g. "--anchor-spacing" */
@@ -75,6 +79,7 @@ const validateUnit =
 
 		/** Package up all this metadata with a nice bow for consumers of validation to format reporting however they like */
 		const validationMetadata: ValidationLocation = {
+			contractName,
 			contractItemName,
 			contractItemKind: L.kind.isoProperty.reverseGet(propertyType),
 			derivedVariableName,
@@ -100,6 +105,13 @@ export const validateContractWithVariables =
 
 		return pipe(
 			collectUnits(group),
-			map(validateUnit(contractLocation)(variableMap))
+			map(
+				validateUnit(
+					L.group.identifier
+						.composeLens(L.identifier.value)
+						.get(group),
+					contractLocation
+				)(variableMap)
+			)
 		);
 	};

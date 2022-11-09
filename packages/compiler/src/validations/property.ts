@@ -27,7 +27,7 @@ const validateDeclarationFixed = (property: Property) => (value: string): Either
 }
 
 export const validateProperty = (property: Property, value: Option<string>): Validation => {
-	const validationName = "Validate property matches type specified by contract";
+	const validationName = "Typecheck";
 
 	return pipe(
 		value,

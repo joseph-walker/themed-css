@@ -5,6 +5,7 @@ import type { Located } from './located';
 import { Kind } from '../language/kinds';
 
 export type ValidationLocation = {
+	contractName: string;
 	contractItemName: string;
 	contractItemKind: Kind;
 	derivedVariableName: string;

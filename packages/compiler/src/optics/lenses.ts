@@ -1,3 +1,4 @@
+import type { CssLocation } from 'css-tree';
 import type { Mark, Index } from 'parsimmon';
 
 import type { Marked } from '../language/astMarked';
@@ -10,10 +11,10 @@ import { fromTraversable, Iso, Lens, Optional, Prism } from 'monocle-ts';
 import { propertyToKind, kindToProperty } from '../language/kinds';
 
 /** Focus on the starting Parsimmon parse index for a Marked thing */
-export const start = Lens.fromProp<Mark<any>>()('start');
+export const start = <T extends Pick<Mark<any>, "start">>() => Lens.fromProp<T>()('start')
 
 /** Focus on the starting Parsimmon parse index for a Marked thing */
-export const end = Lens.fromProp<Mark<any>>()('end');
+export const end = <T extends Pick<Mark<any>, "end">>() => Lens.fromProp<T>()('end')
 
 /** Focus on properties of a Parsimmon parse index */
 export const parseIndex = {
@@ -27,24 +28,39 @@ export const parseIndex = {
 	offset: Lens.fromProp<Index>()("offset")
 } as const;
 
+/** Focus on properties of teh CssLocation type from css-tree */
+export const location = {
+	/** File path of the document this location points to */
+	file: Lens.fromProp<CssLocation>()("source"),
+
+	/** Parse index for starting point of this declaration */
+	start: start<CssLocation>(),
+
+	/** Parse index for ending point of this declaration */
+	end: end<CssLocation>()
+} as const;
+
 /** Focus on Validation metadata */
 export const validation = {
-	/** Return the contract-under-validation's name */
+	/** The contract-under-validation's name */
+	contractName: Lens.fromProp<ValidationLocation>()("contractName"),
+
+	/** The unit-under-validation's name */
 	contractItemName: Lens.fromProp<ValidationLocation>()("contractItemName"),
 
-	/** Return the unit-under-validation's Kind */
+	/** The unit-under-validation's Kind */
 	contractItemKind: Lens.fromProp<ValidationLocation>()("contractItemKind"),
 
-	/** Return the unit-under-validation's derived variable name, e.g. --contract-foo-bar */
+	/** The unit-under-validation's derived variable name, e.g. --contract-foo-bar */
 	derivedVariableName: Lens.fromProp<ValidationLocation>()("derivedVariableName"),
 
-	/** Return the variable-under-validation's location; may not exist if variable is not defined in theme */
+	/** The variable-under-validation's location; may not exist if variable is not defined in theme */
 	variableLocation: Optional.fromOptionProp<ValidationLocation>()("variableLocation"),
 
-	/** Return the variable-under-validation's actual value; may not exist if variable is not defined in theme */
+	/** The variable-under-validation's actual value; may not exist if variable is not defined in theme */
 	variableValue: Optional.fromOptionProp<ValidationLocation>()("variableValue"),
 
-	/** Return the contract-under-validation's location */
+	/** The contract-under-validation's location */
 	contractLocation: Lens.fromProp<ValidationLocation>()("contractLocation")
 } as const;
 

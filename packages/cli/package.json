@@ -14,8 +14,12 @@
   "license": "ISC",
   "dependencies": {
     "@theme-contracts/compiler": "workspace:*",
+    "chalk": "^4.1.2",
     "commander": "^9.4.1",
-    "glob": "^8.0.3"
+    "fp-ts": "^2.13.1",
+    "glob": "^8.0.3",
+    "monocle-ts": "^2.3.13",
+    "table": "^6.8.1"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
