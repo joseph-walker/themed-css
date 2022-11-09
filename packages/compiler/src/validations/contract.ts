@@ -1,73 +1,100 @@
 import type { CssLocation } from 'css-tree';
 
 import type { Marked } from '../language/astMarked';
+import type { ErrorLocation, Validation, VariableMap } from './validation';
 
-import { pipe, flow } from 'fp-ts/function';
+import { pipe } from 'fp-ts/function';
 import { map } from 'fp-ts/Array';
+import { map as mapOption } from 'fp-ts/Option';
+import { fst, snd } from 'fp-ts/Tuple';
+import { Optional } from 'monocle-ts';
 
 import { locate, unlocate } from '../language/located';
 import { collectUnits } from '../optics/collect';
-import { validateKind } from './kind';
+import { validateProperty } from './property';
 import { Located } from '../language/located';
 import * as L from '../optics/lenses';
 
-const unwindVariableLocation = ([location, [variable, value]]: [
-	CssLocation,
-	[string, string]
-]): [string, Located<CssLocation, string>] => {
+const variableOption = Optional.fromNullableProp<VariableMap>();
+
+/**
+ * This confusingly-named function turns a Located (variable, value) tuple
+ * into a (variable, Located value) tuple.
+ *
+ * @param input
+ * @returns
+ */
+const transposeVariableLocation = (
+	input: Located<CssLocation, [string, string]>
+): [string, Located<CssLocation, string>] => {
+	const [location, [variable, value]] = unlocate(input);
 	return [variable, locate(location, value)];
 };
 
 const validateUnit =
 	(contractLocation: CssLocation) =>
-	(variables: Record<string, Located<CssLocation, string>>) =>
-	(unit: Marked.Unit) => {
-		const name = L.unit.identifier.composeLens(L.identifier.value).get(unit)
-		const variable = L.unit.variable.get(unit);
-		const property = L.unit.kind
+	(variables: VariableMap) =>
+	(unit: Marked.Unit): Located<ErrorLocation, Validation[]> => {
+		// Construct all the things we could possibly need to evaluate this contract
+		// statement, e.g. values, properties, themes, locations, contracts, etc.
+
+		/** The name of the contract item to evalute, e.g. "spacing" or "textColor" */
+		const contractItemName = L.unit.identifier
+			.composeLens(L.identifier.value)
+			.get(unit);
+
+		/**
+		 * We have the location the contract is defined from `contractLocation`, but the `unit`
+		 * itself actually contains what _line_ the item is defined on, which is useful. So combine them.
+		 * Conveniently the Marked type duck-types to the CssLocation type from css-tree.
+		 */
+		const contractItemLocation: CssLocation = {
+			source: contractLocation.source,
+			start: L.start.get(unit),
+			end: L.end.get(unit),
+		};
+
+		/** The name of the variable that is derived from this contract, e.g. "--anchor-spacing" */
+		const derivedVariableName = L.unit.variable.get(unit);
+
+		/** The type for this variable as defined in the source contract */
+		const propertyType = L.unit.kind
 			.composeLens(L.kind.value)
 			.composeIso(L.kind.isoProperty)
 			.get(unit);
 
-		console.log();
-		if (variable in variables) {
-			console.log(`✅ Contract item [${name}] is fulfilled by variable in [./${variables[variable].location.source}] on line ${variables[variable].location.start.line}`);
-		} else {
-			console.log(`❌ Contract item [${name}] is unfulfilled!`);
-			console.log();
-			console.log(`   [${name}] derived as custom property [${variable}]`);
-			console.log(`   is defined by the contract in [./${contractLocation.source}] on line ${unit.start.line}.`);
-			console.log();
-			const filesChecked = Object.values(variables).map(function (checkedVar) {
-				const [location, _] = unlocate(checkedVar);
-				return location.source;
-			});
-			console.log(`   Files checked include: [./${filesChecked[0]}]`)
-		}
+		const actualVariable = mapOption(unlocate)(
+			variableOption(derivedVariableName).getOption(variables)
+		);
 
-		// console.log("---");
-		// console.log("Validating a unit against " + variables.length + " variables");
-		// console.log(variable);
-		// console.log(property);
+		/** The location for this variable as derived form the input theme (May not exist) */
+		const actualVariableLocation = mapOption(fst)(actualVariable);
 
-		// if (!variables.has(variable)) {
-		// 	return "Variable Not Defined Error";
-		// } else {
-		// 	return validateKind(kind, variables.get(variable));
-		// }
+		/** The actual value for this variable as derived form the input theme (May not exist) */
+		const actualVariableValue = mapOption(snd)(actualVariable);
+
+		const errorLocation: ErrorLocation = {
+			variableLocation: actualVariableLocation,
+			contractLocation: contractItemLocation,
+		};
+
+		// Begin validations
+		return locate(errorLocation, [
+			// Validates that the type of the variable matches the type defined in the contract
+			validateProperty(propertyType, actualVariableValue),
+		]);
 	};
 
-export const validateContractWithVariables = (
-	contract: Located<CssLocation, Marked.Group>,
-	variables: Located<CssLocation, [string, string]>[]
-) => {
-	const [contractLocation, group] = unlocate(contract);
-	const variableMap = Object.fromEntries(
-		map(flow(unlocate, unwindVariableLocation))(variables)
-	);
+export const validateContractWithVariables =
+	(variables: Located<CssLocation, [string, string]>[]) =>
+	(contract: Located<CssLocation, Marked.Group>) => {
+		const [contractLocation, group] = unlocate(contract);
+		const variableMap = Object.fromEntries(
+			map(transposeVariableLocation)(variables)
+		);
 
-	pipe(
-		collectUnits(group),
-		map(validateUnit(contractLocation)(variableMap))
-	);
-};
+		return pipe(
+			collectUnits(group),
+			map(validateUnit(contractLocation)(variableMap))
+		);
+	};

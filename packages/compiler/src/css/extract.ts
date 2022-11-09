@@ -11,6 +11,7 @@ export function extractContractsFromCss(css: string, filename?: string): Located
 		return node.type === "Comment";
 	}) as csstree.Comment[];
 
+	// @ts-expect-error Location is only optional when `positions: true` is not used as an option to csstree
 	return commentBlocks.map(function (block: csstree.Comment) {
 		return locate(
 			block.loc,
@@ -39,6 +40,7 @@ export function extractVariablesFromCss(css: string, filename?: string) {
 			}
 
 			variables.push(
+				// @ts-expect-error Location is only optional when `positions: true` is not used as an option to csstree
 				locate(location, [identifier, value.value.trim()])
 			);
 		}

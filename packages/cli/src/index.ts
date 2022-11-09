@@ -39,10 +39,9 @@ program
 		const themeFiles = await glob(themeGlob);
 		const themeVariables = (await Promise.all(themeFiles.flatMap(runExtractThemes))).flat();
 
-		// console.log(JSON.stringify(contracts, null, 4));
-		// console.log(JSON.stringify(themeVariables, null, 4));
+		const validations = contracts.flatMap(validateContractWithVariables(themeVariables));
 
-		validateContractWithVariables(contracts[0], themeVariables);
+		console.log(JSON.stringify(validations, null, 4));
 	});
 
 program.parse();

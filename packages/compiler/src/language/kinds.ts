@@ -12,7 +12,7 @@ export type Property = OmitBrowserSpecificProperties<keyof typeof allProperties>
 export type Kind = PascalCase<Property>
 
 export function propertyToKind(property: Property) {
-	return property.replaceAll(/(^.|-.)/g, (match) => match.at(-1).toUpperCase()) as Kind;
+	return property.replaceAll(/(^.|-.)/g, (match) => match.at(-1)!.toUpperCase()) as Kind;
 }
 
 export function kindToProperty(kind: Kind) {
