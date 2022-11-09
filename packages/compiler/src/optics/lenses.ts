@@ -2,9 +2,10 @@ import type { Mark, Index } from 'parsimmon';
 
 import type { Marked } from '../language/astMarked';
 import type { Kind, Property } from '../language/kinds';
+import type { ValidationLocation } from '../data/validation';
 
 import { Traversable } from 'fp-ts/Array';
-import { fromTraversable, Iso, Lens, Prism } from 'monocle-ts';
+import { fromTraversable, Iso, Lens, Optional, Prism } from 'monocle-ts';
 
 import { propertyToKind, kindToProperty } from '../language/kinds';
 
@@ -24,7 +25,28 @@ export const parseIndex = {
 
 	/** Parse index - String offset (number of characters from beginning of string) */
 	offset: Lens.fromProp<Index>()("offset")
-}
+} as const;
+
+/** Focus on Validation metadata */
+export const validation = {
+	/** Return the contract-under-validation's name */
+	contractItemName: Lens.fromProp<ValidationLocation>()("contractItemName"),
+
+	/** Return the unit-under-validation's Kind */
+	contractItemKind: Lens.fromProp<ValidationLocation>()("contractItemKind"),
+
+	/** Return the unit-under-validation's derived variable name, e.g. --contract-foo-bar */
+	derivedVariableName: Lens.fromProp<ValidationLocation>()("derivedVariableName"),
+
+	/** Return the variable-under-validation's location; may not exist if variable is not defined in theme */
+	variableLocation: Optional.fromOptionProp<ValidationLocation>()("variableLocation"),
+
+	/** Return the variable-under-validation's actual value; may not exist if variable is not defined in theme */
+	variableValue: Optional.fromOptionProp<ValidationLocation>()("variableValue"),
+
+	/** Return the contract-under-validation's location */
+	contractLocation: Lens.fromProp<ValidationLocation>()("contractLocation")
+} as const;
 
 /** Focus on AST Identifiers */
 export const identifier = {
