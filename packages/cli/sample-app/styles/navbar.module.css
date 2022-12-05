@@ -1,0 +1,13 @@
+/*!
+@contract navbar
+{
+	background: Background
+	height: Height
+}
+*/
+
+nav {
+	font-size: 24px;
+	background: var(--navbar-background);
+	height: var(--navbar-height);
+}

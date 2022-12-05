@@ -1,0 +1,23 @@
+/*!
+@contract anchor {
+	color: Color
+	weight: FontWeight
+	padding: Padding
+	alignment: AlignItems
+	hover {
+		color: Color
+	}
+}
+*/
+
+a {
+	font-size: 16px;
+	color: var(--anchor-color);
+	font-weight: var(--anchor-weight);
+	padding: var(--anchor-padding);
+	align-items: var(--anchor-alignment);
+}
+
+a:hover {
+	color: var(--anchor-hover-color);
+}
