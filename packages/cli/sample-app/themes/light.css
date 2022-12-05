@@ -1,0 +1,10 @@
+:root {
+	--anchor-color: #333333;
+	--anchor-weight: 400;
+	--anchor-padding: 16px;
+	--anchor-hover-color: 32px;
+	--navbar-background: #008cba;
+	--navbar-height: 64px;
+	--section-background: #ffffff;
+	--some-other-var: red;
+}
